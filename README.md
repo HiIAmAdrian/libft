@@ -1,2 +1,2 @@
 # libft
-64 important c functions recoded by myself.
+64 important C functions recoded by myself.
