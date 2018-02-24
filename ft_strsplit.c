@@ -6,100 +6,65 @@
 /*   By: adstan <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 19:13:18 by adstan            #+#    #+#             */
-/*   Updated: 2018/02/22 19:44:48 by adstan           ###   ########.fr       */
+/*   Updated: 2018/02/24 13:51:56 by adstan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./includes/libft.h"
 
-static int		sari(char const *s, int i, char c)
+static int		ft_countwords(char const *s, char c)
 {
-	while (s[i] == c)
-		i++;
-	return (i);
+	if (c == '\0')
+		return ((*s == '\0') ? 0 : 1);
+	while (*s == c)
+		s++;
+	if (*s == '\0')
+		return (0);
+	while (*s != c && *s != '\0')
+		s++;
+	return (1 + ft_countwords(s, c));
 }
 
-static int		numar(char const *s, int i, char c)
+static int		get_word_len(char const *str, char c)
 {
-	int nr;
+	int	i;
+	int	len;
 
-	nr = 0;
-	while (s[i] != c)
+	i = 0;
+	len = 0;
+	while (str[i] == c)
+		i++;
+	while (str[i] != c && str[i] != '\0')
 	{
 		i++;
-		nr++;
+		len++;
 	}
-	return (nr);
-}
-
-static int		numarcuvinte(char const *s, char c)
-{
-	int nr;
-	int i;
-
-	nr = 0;
-	i = 1;
-	if (s[0] != c)
-		nr++;
-	while (s[i])
-	{
-		if (s[i] != c && s[i - 1] == c)
-			nr++;
-		i++;
-	}
-	return (nr);
-}
-
-static char		**ooop(char const *s, char c, int v[], char **tab)
-{
-	if (!(tab = (char **)malloc(sizeof(char*) * (v[1] + 1))))
-		return (NULL);
-	tab[v[1]] = 0;
-	while (v[0] < v[1])
-	{
-		v[2] = sari(s, v[2], c);
-		v[3] = numar(s, v[2], c);
-		if (!(tab[v[0]] = (char*)malloc(v[3] + 1)))
-			return (NULL);
-		tab[v[0]++][v[3]] = 0;
-		v[2] += v[3];
-	}
-	v[0] = 0;
-	v[2] = 0;
-	while (tab[v[0]])
-	{
-		v[1] = 0;
-		v[2] = sari(s, v[2], c);
-		v[3] = numar(s, v[2], c);
-		while (v[1] < v[3])
-			tab[v[0]][v[1]++] = s[v[2]++];
-		tab[v[0]++][v[1]] = 0;
-	}
-	return (tab);
+	return (len);
 }
 
 char			**ft_strsplit(char const *s, char c)
 {
-	char	**tab;
-	int		v[4];
+	int		i;
+	int		j;
+	int		k;
+	char	**str2;
 
-	v[0] = 0;
-	v[1] = 0;
-	v[2] = 0;
-	v[3] = 0;
-	tab = NULL;
-	if (!s)
+	if (!s || !(str2 = (char **)ft_memalloc(sizeof(*str2) *
+					(ft_countwords(s, c) + 1))))
 		return (NULL);
-	if (!s[0])
+	i = -1;
+	j = 0;
+	while (++i < ft_countwords(s, c))
 	{
-		if ((tab = (char**)malloc(sizeof(char*))))
-		{
-			tab[0] = 0;
-			return (tab);
-		}
-		else
-			return (NULL);
+		k = 0;
+		if (!(str2[i] = ft_strnew(get_word_len(&s[j], c) + 1)))
+			str2[i] = NULL;
+		while (s[j] == c)
+			j++;
+		while (s[j] != c && s[j])
+			str2[i][k++] = s[j++];
+		str2[i][k] = '\0';
 	}
-	v[1] = numarcuvinte(s, c);
-	return (ooop(s, c, v, tab));
+	str2[i] = 0;
+	return (str2);
 }
